@@ -23,6 +23,9 @@ class UserPlaylist extends React.Component {
 
   // this needs to be modified to retrieve from mysql using user's userName into the Playlist table
   loadUserPlaylists(){
+    // server side quer
+
+    // server response hardcode
     this.setState({userPlaylists:[{
                                     playlistId: 1,
                                     playlistTitle: 'taeyang favorite',

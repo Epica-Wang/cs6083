@@ -10,7 +10,6 @@ const LoginForm = ({
     user
 }) => (
     <div className="container">
-        <h1></h1>
         <div className="card-panel login-panel">
             <form className="col s12" action="/" onSubmit={onSubmit}>
                 <h4 className="center-align">Log in</h4>

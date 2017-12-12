@@ -17,10 +17,11 @@ class Search extends React.Component {
     this.changeSearch = this.changeSearch.bind(this);
   }
 
+
+  // this should send request to server.. and fetch the search result.... by grabbing the searchOpt and searchVal in the state...
   search(event){
     event.preventDefault();
 
-    // this should send request to server.. and fetch the search result.... by grabbing the searchOpt and searchVal in the state...
     console.log('search value: ' + this.state.search.searchVal);
     console.log('search option: ' + this.state.search.searchOpt);
     // DO NOT call renderSearchResults here. call it in render()!!!.
@@ -38,10 +39,19 @@ class Search extends React.Component {
 
   renderSearchResults(){
     if(this.state.searchResult){
-      // render
+      // render depending on this.state.search.searchOpt
+      // if the returned result is User, render user
+
+
+      // if the returned result is Artist, render artist
+
+
+      // if the returned result is Track, render track...
 
     }else{
-
+      return(
+        <p>working or not?? </p>
+      );
     }
   }
 

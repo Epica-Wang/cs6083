@@ -10,7 +10,6 @@ const SignupForm = ({
     user
 }) => (
     <div className="container">
-      <h1></h1>
     <div className="card-panel signup-panel">
       <form className="col s12" action="/" onSubmit={onSubmit}>
         <h4 className="center-align">Sign Up</h4>
