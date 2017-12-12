@@ -6,7 +6,7 @@ import './Base.css';
 const Base = ({children}) => (
   <div>
     <nav className="nav-bar indigo">
-        <div className="nav-wrapper">
+      <div className="nav-wrapper">
         {/* <a href="/" className="brand-logo center"> CS6083 Music </a> */}
         <ul id="nav-mobile" className="left hide-on-small-and-down">
           {
@@ -16,18 +16,9 @@ const Base = ({children}) => (
                 <div>
                   <li><Link to='/home'>Home</Link></li>
                   <li><Link to='/user'>{Auth.getUsername()}</Link></li>
+                  <li><Link to='/search'>Search</Link></li>
                   <li><Link to='/logout'>Log out</Link></li>
                 </div>
-
-                <form>
-                  <input id='searchKey' type="search" placeholder='Search'/>
-                  <input id='searchOptUser' type='radio' name='searchOpt' value='user' />
-                  <label for='searchOptUser'>User</label>
-                  <input id='searchOptArtist' type='radio' name='searchOpt' value='artist' />
-                  <label for='searchOptArtist'>Artist</label>
-                  <input id='searchOptTrack' type='radio' name='searchOpt' value='track' />
-                  <label for='searchOptTrack'>Track</label>
-                </form>
               </div>
             )
             :
@@ -39,11 +30,8 @@ const Base = ({children}) => (
             )
           }
         </ul>
-
-        </div>
-
+      </div>
     </nav>
-    <br/>
     {children}
   </div>
 );

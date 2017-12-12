@@ -6,7 +6,7 @@ import Playlist from './Playlist/Playlist';
 import UserPlaylist from './UserPlaylist/UserPlaylist';
 import SignupPage from './Signup/SignupPage';
 import LoginPage from './Login/LoginPage';
-import SearchBar from './SearchBar/SearchBar';
+import Search from './Search/Search';
 
 const routes = {
   component: Base,
@@ -45,7 +45,7 @@ const routes = {
       path: '/search',
       getComponent: (location, callback) => {
         if(Auth.isAuthenticated()){
-          callback(null, SearchBar);  // this needs to be thought through.
+          callback(null, Search);  // this needs to be thought through.
         }else{
           callback(null, LoginPage);
         }
