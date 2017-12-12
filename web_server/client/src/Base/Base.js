@@ -19,9 +19,15 @@ const Base = ({children}) => (
                   <li><Link to='/logout'>Log out</Link></li>
                 </div>
 
-                <div>
-                  <li><input id='searchKey' type="search" placeholder='Search'/></li>
-                </div>
+                <form>
+                  <input id='searchKey' type="search" placeholder='Search'/>
+                  <input id='searchOptUser' type='radio' name='searchOpt' value='user' />
+                  <label for='searchOptUser'>User</label>
+                  <input id='searchOptArtist' type='radio' name='searchOpt' value='artist' />
+                  <label for='searchOptArtist'>Artist</label>
+                  <input id='searchOptTrack' type='radio' name='searchOpt' value='track' />
+                  <label for='searchOptTrack'>Track</label>
+                </form>
               </div>
             )
             :

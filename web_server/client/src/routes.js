@@ -72,7 +72,7 @@ const routes = {
     {
       path: '/logout',
       onEnter: (nextStage, replace) => {
-        // Auth.deauthenticateUser();  // currently disabled for testing
+        Auth.deauthenticateUser();  // currently disabled for testing
         replace('/login');
       }
     }
