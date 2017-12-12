@@ -32,6 +32,7 @@ const Base = ({children}) => (
         </ul>
       </div>
     </nav>
+    <br/>
     {children}
   </div>
 );
