@@ -7,6 +7,8 @@ var cors = require('cors');
 var index = require('./routes/index');
 var user = require('./routes/user');
 var search = require('./routes/search');
+var welcomepage = require('./routes/welcomepage');
+var login = require('./routes/login');
 
 var app = express();
 
@@ -22,8 +24,11 @@ app.use(cors());
   Different routes
 */
 app.use('/', index);
+app.use('/',welcomepage);
 app.use('/user', user);
 app.use('/search', search);
+app.use('/login', login);
+
 
 // 404 not found
 app.use(function(req, res, next) {

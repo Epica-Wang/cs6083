@@ -1,11 +1,11 @@
 import React from 'react';
+import Auth from '../Auth/Auth';
 import './Search.css';
 
 class Search extends React.Component {
   constructor(){
     super();
     this.state = {
-      // what states for the search bar?
       search: {
               searchOpt: '',
               searchVal: '',
@@ -17,14 +17,34 @@ class Search extends React.Component {
     this.changeSearch = this.changeSearch.bind(this);
   }
 
-
-  // this should send request to server.. and fetch the search result.... by grabbing the searchOpt and searchVal in the state...
+  // Generate http request to retrieve search results from server.
   search(event){
     event.preventDefault();
 
+    const searchVal = this.state.search.searchVal;
+    const searchOpt = this.state.search.searchOpt;
+
     console.log('search value: ' + this.state.search.searchVal);
     console.log('search option: ' + this.state.search.searchOpt);
-    // DO NOT call renderSearchResults here. call it in render()!!!.
+
+    let url = 'http://localhost:3000/search/' + searchOpt + '/' + searchVal;
+    // console.log('this is the url: ' + url);  // for testing.
+
+    let request = new Request(encodeURI(url), {
+      method: 'GET',
+      headers: {
+        'Authorization': 'bear ' + Auth.getUsername()
+      },
+      cache: false
+    });
+
+    fetch(request)
+      .then((response) => response.json())
+      .then((searchRes) => {
+        this.setState({
+          searchResult: searchRes
+        });
+      });
   }
 
   changeSearch(event){
@@ -40,17 +60,46 @@ class Search extends React.Component {
   renderSearchResults(){
     if(this.state.searchResult){
       // render depending on this.state.search.searchOpt
-      // if the returned result is User, render user
+      /**
+      needs to be updated.
+      */
+      const searchResList = this.state.searchResult.map((res) => {
+        if(this.state.search.searchOpt === 'user'){
+          return (
+            <div>
+              <a className='list-group-item'>
+                {res.userName}, {res.uFirstName}, {res.uLastName}, {res.uCity}, {res.uEmail}
+              </a>
+            <br/>
+            </div>
+          );
+        }else if(this.state.search.searchOpt === 'artist'){
+          return (
+            <div>
+              <a className='list-group-item'>
+                artist....
+              </a>
+            </div>
+          );
+        }else{
+          return (
+            <div>
+              <a className='list-group-item'>
+                track...
+              </a>
+            <br/>
+            </div>
+          );
+        }
 
+      });
 
-      // if the returned result is Artist, render artist
-
-
-      // if the returned result is Track, render track...
-
-    }else{
       return(
-        <p>working or not?? </p>
+        <div className='container-fluid' key='userName'>
+          <div className='list-group'>
+            {searchResList}
+          </div>
+        </div>
       );
     }
   }
@@ -71,7 +120,10 @@ class Search extends React.Component {
           <br/>
           <input id='submit' type='submit' name='searchButton' />
         </form>
-          {}
+
+        <div className='searchResult'>
+          {this.renderSearchResults()}
+        </div>
       </div>
     );
   }

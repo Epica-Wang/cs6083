@@ -2,6 +2,7 @@ import React from 'react';
 import './Playlist.css';
 
 import Track from '../Track/Track';
+import Auth from '../Auth/Auth';
 
 /*
 Playlist maintains all the tracks within the playlist
@@ -11,7 +12,7 @@ class Playlist extends React.Component {
     super(props);
     this.state = {
       playlistId: 0,
-      tracks: null
+      tracks: []
     };
   }
 
@@ -19,53 +20,51 @@ class Playlist extends React.Component {
     this.loadTracks();
   }
 
-  // should later change to get data through mysql using the passed in playlist and userName from localStorage
+  // contact server to retrieve a particular user's playlists.
   loadTracks(){
-    console.log('loading tracks. getting param playlistId: ' + this.props.params.playlistId);
-    // this.setState({ playlistId: this.props.params.playlistId });
-    // console.log('not sure if it\'ll be used:. but whaterver.....' + this.state.playlistId);
+    // console.log('loading tracks. getting param playlistId: ' + this.props.params.playlistId); // for testing.
+    this.setState({ playlistId: this.props.params.playlistId });
 
-    // const req = 'http://localhost:3000/user/' + localStorage.getItem('username') + '/playlist/' + this.state.playlistId;
-    // console.log(req);
-    //
-    // // contact server. server will return query result.
-    // fetch(req, {}).then(function(response){
-    //   //  parse response to get result.
-    //   // setState
-    //
-    // }).catch(function(error){
-    //   console.log(error);
-    // });
+    let url = 'http://localhost:3000/user/' + Auth.getUsername() + '/playlist/' + this.props.params.playlistId;
 
-    this.setState({tracks: [{
-                          trackName: "Hello",
-                          trackDuration: 295493,
-                          trackArtist: "Adele",
-                          trackAlbum: "me love adele",
-                          trackUrl: 'https://www.youtube.com'
-                        },
-                        {
-                          trackName: 'Send My Love (To Your New Lover)',
-                          trackDuration: 223080,
-                          trackArtist: 'Adele',
-                          trackAlbum: 'me love adele 2',
-                          trackUrl: 'https://www.youtube.com'
-                        }]
-                    });
+    let request = new Request(encodeURI(url), {
+      method: 'GET',
+      headers: {
+        'Authorization': 'bearer ' + Auth.getUsername()
+      },
+      cache: false
+    });
+
+    fetch(request)
+      .then((response) => response.json())
+      .then((playlistTracks) => {
+        this.setState({
+          tracks: playlistTracks
+        });
+      })
+      .catch(function(error){
+        console.log(error);
+      });
   }
 
   renderTracks(){
     const tracksList = this.state.tracks.map((track) => {
+      const tr= track;
+      if(!tr.url){
+        tr['trackUrl'] = 'https://www.youtube.com';
+      }
+
       return (
         <a className='list-group-item'>
-          <Track track={track} />
+          <Track track={tr} />
         </a>
       );
     });
 
     return (
-      <div className='container-fluid'>
-        <h6>{this.state.playlistId}</h6>
+      <div className='container-fluid playlist-container'>
+        <h5>Tracks for Playlist {this.state.playlistId}:</h5>
+        <br/>
         <div className='list-group'>
           {tracksList}
         </div>

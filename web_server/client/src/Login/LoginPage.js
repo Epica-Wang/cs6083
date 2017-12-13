@@ -38,27 +38,27 @@ class LoginPage extends React.Component {
                 password: this.state.user.password
             })
         };
-        // fetch('http://localhost:3000/auth/login', init)
-        //     .then(response => {
-        //         if (response.status === 200) {
-        //             this.setState({
-        //                 errors: {}
-        //             });
-        //
-        //             response.json().then(function(json){
-        //                 console.log(json);
-        //                 Auth.authenticateUser(json.token, this.state.user.email);  // handle token and email
-        //                 this.context.router.replace('/');
-        //             }.bind(this));
-        //         } else {
-        //             console.log('Login failed');
-        //             response.json().then(function(json){
-        //                 const errors = json.errors ? json.errors : {};  // parse for errors
-        //                 errors.summary = json.message;
-        //                 this.setState({errors});
-        //             }.bind(this));
-        //         }
-        //     });
+        fetch('http://localhost:3000/login', init)
+            .then(response => {
+                if (response.status === 200) {
+                    this.setState({
+                        errors: {}
+                    });
+
+                    response.json().then(function(json){
+                        console.log(json);
+                        Auth.authenticateUser(json.token, this.state.user.username);  // handle token and email
+                        this.context.router.replace('/');
+                    }.bind(this));
+                } else {
+                    console.log('Login failed');
+                    response.json().then(function(json){
+                        const errors = json.errors ? json.errors : {};  // parse for errors
+                        errors.summary = json.message;
+                        this.setState({errors});
+                    }.bind(this));
+                }
+            });
     }
 
     changeUser(event) {
