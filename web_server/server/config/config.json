@@ -1,0 +1,7 @@
+{
+  "host": "localhost",
+  "user": "root",
+  "password": "Cyu_0510",
+  "database": "cs6083_proj1",
+  "connectionLimit": 10
+}
