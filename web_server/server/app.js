@@ -10,6 +10,7 @@ var search = require('./routes/search');
 var welcomepage = require('./routes/welcomepage');
 var login = require('./routes/login');
 var signup = require('./routes/signup');
+var track = require('./routes/track');
 
 var app = express();
 
@@ -30,7 +31,7 @@ app.use('/user', user);
 app.use('/search', search);
 app.use('/login', login);
 app.use('/signup', signup);
-
+app.use('/track', track);
 
 // 404 not found
 app.use(function(req, res, next) {

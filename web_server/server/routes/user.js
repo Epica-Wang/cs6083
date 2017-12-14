@@ -7,10 +7,7 @@ router.get('/:username', function(req, res, next){
   const un = req.params['username'];
   console.log('retrieving user ' + un + '\'s playlists... ');
 
-  /**
-  needs to be updated
-  */
-  const userPlaylistQuery = 'select userName,uCity,uEmail, pTitle from User natural join Playlist \
+  const userPlaylistQuery = 'select userName, uCity, uEmail, pid, pTitle from User natural join Playlist \
   where userName = ?';
 
   pool.getConnection(function(err, conn){
@@ -36,7 +33,7 @@ router.get('/:username/playlist/:playlistId', function(req, res, next){
   /**
   needs to be updated
   */
-  const userDisplayTrack = 'select tTitle from PlaylistTrack natural join Track \
+  const userDisplayTrack = 'select * from PlaylistTrack natural join Track \
   where pid = ?';
 
   pool.getConnection(function(err, conn){
@@ -54,6 +51,24 @@ router.get('/:username/playlist/:playlistId', function(req, res, next){
   });
 });
 
+/**Retrieve artist and albums information*/
+router.get('/:username/artist/:aid', function(req, res, next){
+  const un = req.params['username'];
+  const aid = req.params['aid'];
+  console.log('retrieving aid ' + aid + '\'s albums...');
+
+  const artistAlbumsQuery = 'select * from Artist natural join ArtistAlbum natural join Album where aid = ?';
+  pool.getConnection(function(err, conn){
+    if(err){
+      console.log('Failed to obtain mysql connection from pool ' + err);
+    }
+    conn.query(artistAlbumsQuery, aid, function(error, results, feilds){
+      conn.release();
+      if(error) throw error;
+      res.json(results);
+    });
+  });
+});
 
 /**Like an Artist*/
 router.get('/:username/like/:aid', function(req, res, next){
@@ -73,8 +88,10 @@ router.get('/:username/like/:aid', function(req, res, next){
     conn.query(userLikeArtistQuery,[un,aid,CURRENT_TIMESTAMP], function(error, results, fields){
       conn.release(); // done with the connection
 
-      if(error) throw error;  // error querying
-
+      if(error){
+        res.json("You already liked this artist");
+        return;  // error querying
+      }
       res.json("You now successfully like this artist:)");  // return result to client
     });
   });
@@ -120,7 +137,7 @@ router.get('/:username/playlist/:pid/addtrack/:tid', function(req, res, next){
     conn.query(userAddTrackToPl,[pid,tid], function(error, results, fields){
       conn.release(); // done with the connection
 
-      if(error) throw error;  // error querying
+      if(error) return;  // error querying
 
       res.json("Successfully added!");  // return result to client
     });
@@ -147,7 +164,10 @@ router.get('/:username/follow/:followingUserName', function(req, res, next){
     conn.query(userFollowOtherUser,[un,followingUserName,CURRENT_TIMESTAMP], function(error, results, fields){
       conn.release(); // done with the connection
 
-      if(error) throw error;  // error querying
+      if(error){
+        res.json("Already followed");
+        return;
+      };  // error querying
 
       res.json("Successfully follow"+followingUserName);  // return result to client
     });
@@ -175,11 +195,12 @@ router.get('/:username/track/:tid/rating/:rate', function(req, res, next){
     conn.query(userRateATrack,[un,tid,rate,CURRENT_TIMESTAMP], function(error, results, fields){
       conn.release(); // done with the connection
 
-      if(error) throw error;  // error querying
+      if(error) return;  // error querying
 
       res.json("Successfully store your rating!");  // return result to client
     });
   });
 });
+
 
 module.exports = router;

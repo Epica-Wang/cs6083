@@ -22,11 +22,8 @@ class Playlist extends React.Component {
 
   // contact server to retrieve a particular user's playlists.
   loadTracks(){
-    // console.log('loading tracks. getting param playlistId: ' + this.props.params.playlistId); // for testing.
-    this.setState({ playlistId: this.props.params.playlistId });
-
     let url = 'http://localhost:3000/user/' + Auth.getUsername() + '/playlist/' + this.props.params.playlistId;
-
+    this.setState({playlistId: this.props.params.playlistId});
     let request = new Request(encodeURI(url), {
       method: 'GET',
       headers: {
@@ -38,6 +35,7 @@ class Playlist extends React.Component {
     fetch(request)
       .then((response) => response.json())
       .then((playlistTracks) => {
+        // console.log(playlistTracks);
         this.setState({
           tracks: playlistTracks
         });
@@ -53,17 +51,17 @@ class Playlist extends React.Component {
       if(!tr.url){
         tr['trackUrl'] = 'https://www.youtube.com';
       }
-
+      // console.log(track);
       return (
         <a className='list-group-item'>
-          <Track track={tr} />
+          <Track track={tr} playlistId={this.state.playlistId} />
         </a>
       );
     });
 
     return (
       <div className='container-fluid playlist-container'>
-        <h5>Tracks for Playlist {this.state.playlistId}:</h5>
+        <h6>Tracks for Playlist {this.state.playlistId}:</h6>
         <br/>
         <div className='list-group'>
           {tracksList}

@@ -23,9 +23,9 @@ class Album extends React.Component {
   // contact server to retrieve a particular user's playlists.
   loadTracks(){
     // console.log('loading tracks. getting param playlistId: ' + this.props.params.playlistId); // for testing.
-    this.setState({ albumId: this.props.params.albumId });
-
-    let url = 'http://localhost:3000/search/album/' + this.props.params.albumId;
+    this.setState({albumId: this.props.params.abId});
+    let url = 'http://localhost:3000/search/album/' + this.props.params.abId;
+    console.log(url);
 
     let request = new Request(encodeURI(url), {
       method: 'GET',
@@ -56,14 +56,14 @@ class Album extends React.Component {
 
       return (
         <a className='list-group-item'>
-          <Track track={tr} album={this.state.albumId}/>
+          <Track track={tr} albumId={this.state.albumId}/>
         </a>
       );
     });
 
     return (
       <div className='container-fluid album-container'>
-        <h6>Tracks for Album {this.state.albumId}:</h6>
+        <h6>Tracks for {}:</h6>
         <br/>
         <div className='list-group'>
           {tracksList}

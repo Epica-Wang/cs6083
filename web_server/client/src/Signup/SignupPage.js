@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Auth from '../Auth/Auth';
 import SignupForm from './SignupForm';
 
 class SignUpPage extends React.Component {
@@ -76,7 +75,7 @@ class SignUpPage extends React.Component {
     }
 
     changeUser(event) {
-        const inputField = event.target.name;   // gets the input field values
+        const inputField = event.target.name;   // gets the input field
         const user = this.state.user;
         user[inputField] = event.target.value;
 

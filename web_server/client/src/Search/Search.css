@@ -11,3 +11,11 @@
   margin-left: 80px;
   margin-right: 80px;
 }
+
+.selectedPlaylist {
+  line-height: 3em;
+}
+
+.selectedTrack {
+  line-height: 3em;
+}

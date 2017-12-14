@@ -1,5 +1,7 @@
 import React from 'react';
 import Auth from '../Auth/Auth';
+import Track from '../Track/Track';
+import {Link} from 'react-router';
 import './Search.css';
 
 class Search extends React.Component {
@@ -10,11 +12,17 @@ class Search extends React.Component {
               searchOpt: '',
               searchVal: '',
       },
-      searchResult: []
+      searchResult: [],
+      selectedPlaylist: {
+        pid: 0,
+        tid: 0
+      }
     };
 
     this.search = this.search.bind(this);
     this.changeSearch = this.changeSearch.bind(this);
+    this.addToPlaylist = this.addToPlaylist.bind(this);
+    this.updateSelectedPlaylist = this.updateSelectedPlaylist.bind(this);
   }
 
   // Generate http request to retrieve search results from server.
@@ -23,9 +31,6 @@ class Search extends React.Component {
 
     const searchVal = this.state.search.searchVal;
     const searchOpt = this.state.search.searchOpt;
-
-    console.log('search value: ' + this.state.search.searchVal);
-    console.log('search option: ' + this.state.search.searchOpt);
 
     let url = 'http://localhost:3000/search/' + searchOpt + '/' + searchVal;
     // console.log('this is the url: ' + url);  // for testing.
@@ -57,6 +62,44 @@ class Search extends React.Component {
     this.setState({ search });
   }
 
+  addToPlaylist(event){
+    event.preventDefault();
+
+    // console.log(this.state.selectedPlaylist.pid);
+    // console.log(this.state.selectedPlaylist.tid);
+    const pid = this.state.selectedPlaylist.pid;
+    const tid = this.state.selectedPlaylist.tid;
+
+    let url = 'http://localhost:3000/user/' + Auth.getUsername() + '/playlist/' + pid + '/addtrack/' + tid;
+    // console.log(url);
+
+    let request = new Request(encodeURI(url), {
+      method: 'GET',
+      headers: {
+        'Authorization': 'bearer ' + Auth.getUsername()
+      },
+      cache: false
+    });
+
+    fetch(request)
+      .then((response) => response.json())
+      .then((playlistTracks) => {
+        console.log('added track to playlist');
+      })
+      .catch(function(error){
+        console.log(error);
+      });
+  }
+
+  updateSelectedPlaylist(event){
+    const inputField = event.target.name;
+    const selectedPlaylist = this.state.selectedPlaylist;
+    selectedPlaylist[inputField] = event.target.value
+
+    this.setState({selectedPlaylist});
+    // console.log(this.state.selectedPlaylist.pid);
+  }
+
   renderSearchResults(){
     if(this.state.searchResult){
       // render depending on this.state.search.searchOpt
@@ -67,38 +110,66 @@ class Search extends React.Component {
         if(this.state.search.searchOpt === 'user'){
           return (
             <div>
-              <a className='list-group-item'>
-                {res.userName}, {res.uFirstName}, {res.uLastName}, {res.uCity}, {res.uEmail}
-              </a>
+              <Link to={'/user/' + res.userName} className='list-group-item'>
+                {res.userName}, {res.pid}, {res.pTitle}
+              </Link>
             <br/>
             </div>
           );
         }else if(this.state.search.searchOpt === 'artist'){
           return (
             <div>
-              <a className='list-group-item'>
-                artist....
-              </a>
+              <Link to={'/artist/' + res.aid} className='list-group-item'>
+                {res.aname}, {res.abTitle}
+              </Link>
             </div>
           );
         }else{
+          if(!res.url){
+            res['trackUrl'] = 'http://www.youtube.com';
+          }
           return (
             <div>
-              <a className='list-group-item'>
-                track...
+              <a className='list-group-item row'>
+                <Track className='col s11' track={res} tid={res.tID}/>
               </a>
-            <br/>
             </div>
           );
         }
-
       });
 
       return(
         <div className='container-fluid' key='userName'>
-          <div className='list-group'>
-            {searchResList}
-          </div>
+          <label>Here are your search results: </label><br/><br/>
+
+          <form onSubmit={this.addToPlaylist} onChange={this.updateSelectedPlaylist}>
+
+            <div className='list-group'>
+                {searchResList}
+            </div>
+
+            {
+              (this.state.search.searchOpt === 'track' && this.state.searchResult.length > 0) ?
+
+              <div class="input-field col s12 row">
+                <div className='input-field col s6'>
+                  <input className='selectedPlaylist' placeholder='Playlist ID' name='pid' type='number' required />
+                </div>
+                <div className='input-field col s6'>
+                  <input className='selectedTrack input-field col s6' placeholder='Track ID' name='tid' type='number' required />
+                </div>
+                <br/>
+                {/* <p>Add to playlist: not working as planned due to a bug that my version of chrome does not allow select tag</p> */}
+                <br/>
+                <input type='submit' value='Save to Playlist'/>
+              </div>
+
+              :
+              <div></div>
+            }
+
+
+          </form>
         </div>
       );
     }
@@ -108,17 +179,17 @@ class Search extends React.Component {
     return(
       <div>
         <form className='searchForm' onSubmit={this.search}>
-          <input id='searchKey' type="search" name='searchVal' onChange={this.changeSearch} placeholder='Search'/>
+          <input id='searchKey' type="search" name='searchVal' onChange={this.changeSearch} placeholder='Search' required />
 
           <input id='searchOptUser' type='radio' name='searchOpt' value='user' onChange={this.changeSearch} />
-          <label for='searchOptUser'>User</label>
+          <label htmlFor='searchOptUser'>User</label>
           <input id='searchOptArtist' type='radio' name='searchOpt' value='artist' onChange={this.changeSearch} />
-          <label for='searchOptArtist'>Artist</label>
+          <label htmlFor='searchOptArtist'>Artist</label>
           <input id='searchOptTrack' type='radio' name='searchOpt' value='track' onChange={this.changeSearch} />
-          <label for='searchOptTrack'>Track</label>
+          <label htmlFor='searchOptTrack'>Track</label>
           <br/>
           <br/>
-          <input id='submit' type='submit' name='searchButton' />
+          <input id='submit' type='submit' value='Search' name='searchButton' />
         </form>
 
         <div className='searchResult'>

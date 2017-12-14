@@ -11,9 +11,13 @@ class Artist extends React.Component {
   constructor(){
     super();
     this.state = {
-      aid: '', // this is grabbed from localStorage.
-      artistAlbums: []
+      aid: '',
+      aname: '',
+      aDesc: '',
+      artistAlbums: [],
+      message: ''
     };
+    this.likeArtist = this.likeArtist.bind(this);
   }
 
   componentDidMount(){
@@ -23,37 +27,75 @@ class Artist extends React.Component {
 
   // this needs to be modified to retrieve from mysql using user's userName into the Playlist table
   loadArtistAlbums(){
-    // server side quer
 
-    // server response hardcode
-    this.setState({artistAlbums:[{
-                                    aid: 3,
-                                    abTitle: 'Fade',
-                                    abDate: '2017-10-11'
-                                  }]
-                                });
+    let url = 'http://localhost:3000/user/' + Auth.getUsername() + '/artist/' + this.props.params.aid;  // artist id
+    let request = new Request(encodeURI(url), {
+      method: 'GET',
+      headers: {
+        'Authorization': 'bearer ' + Auth.getUsername()
+      },
+      cache: false
+    });
+
+    fetch(request)
+      .then((response) => response.json())
+      .then((artistAlbums) => {
+        console.log(artistAlbums);
+        this.setState({
+          aname: artistAlbums[0]['aName'],
+          aDesc: artistAlbums[0]['aDesc'],
+          artistAlbums: artistAlbums
+        });
+
+      })
+      .catch(function(error){
+        console.log(error);
+      });
+  }
+
+  likeArtist(){
+    let url = 'http://localhost:3000/user/' + Auth.getUsername() + '/like/' + this.props.params.aid;
+
+    console.log(url);
+    let request = new Request(encodeURI(url), {
+      method: 'GET',
+      headers: {
+        'Authorization': 'bearer ' + Auth.getUsername()
+      },
+      cache: false
+    });
+
+    fetch(request)
+      .then((response) => response.json())
+      .then((res) => {
+
+        this.setState({
+            message: res
+        });
+
+      })
+      .catch(function(error){
+
+        console.log(error);
+      });
   }
 
   renderArtistAlbums(){
     const albumList = this.state.artistAlbums.map((album) => {
+      const ab = album;
       return (
-        /*
-          here i should NOT generate a Playlist component in the loop....
-          should instead generate links!!!!!! then if user clicks on it. it should route to a different page.
-          should look at the code to route between login and signup and base.
-
-          DONE
-        */
         <div className='list-group-item'>
-          <Link to={'/album/' + album.aid}>{album.abTitle} ...{album.abDate}</Link>
+          Album {album.abID}: <Link to={'/album/' + ab.abID} album={ab}>{album.abTitle} ... {album.abDate}</Link>
         </div>
       );
     });
 
     return (
       <div className='container-fluid'>
-        {/* <h6>{this.state.userPlaylists.playlistTitle}</h6> */}
+        <h5>{this.state.aname} </h5>
+        <h6>{this.state.aDesc} </h6>
         <div className='list-group'>
+          <br/>
           {albumList}
         </div>
       </div>
@@ -65,9 +107,14 @@ class Artist extends React.Component {
       return (
         <div>
           <div className='artistProfile'>
+            <h6> You are viewing {this.state.aname}'s albums </h6><br/>
+            <a class="btn-floating btn-small waves-effect waves-light red" onClick={this.likeArtist}><i class="material-icons">+</i></a>
+            <br/>
             <div className='artist-albums'>
               {this.renderArtistAlbums()}
             </div>
+            <br/>
+            <div>{this.state.message}</div>
           </div>
         </div>
       );
