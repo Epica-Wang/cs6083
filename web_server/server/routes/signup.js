@@ -4,33 +4,43 @@ var pool = require('../config/mysql.js');
 router.post('/', function(req, res, next){
   const user = req.body;
   const username = user.username;
+  const firstname = user.firstname;
+  const lastname = user.lastname;
+  const email = user.email;
   const password = user.password;
+  const city = user.city;
 
-  console.log('login entered: username=' + username + ' password=' + password);
+  console.log('signup entered: ' + JSON.stringify(user));
+
   /**
   needs to be updated
   */
-  const loginQuery = 'select userName from User where userName = "' + username + '"and uPassword = "' + password + '"';
+  const signupQuery = 'insert into User values (?,?,?,?,?,?)';
 
-  console.log(loginQuery);
+  console.log(signupQuery);
+
   pool.getConnection(function(err, conn){
     if(err){  // error getting a connection
       console.log('Failed to obtain mysql connection from pool ' + err);
     }
 
-    conn.query(loginQuery, function(error, results, fields){
+    conn.query(signupQuery,[username,password,firstname,lastname,city,email],function(error, results, fields){
       conn.release(); // done with the connection
 
-      if(results.length === 0){
+      if(error){
+        console.log(error);
         res.status(400).json({
           success: false,
-          message: 'Failed to login'
+          message: 'Failed to signup',
+          errors: {
+            username: 'This username is already taken'
+          }
         });
       }else{
           res.status(200).json({
           success: true,
-          message: results
-        });  // return result to client
+          message: 'You have successfully signed up'
+        });
       }
 
     });

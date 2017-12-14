@@ -40,6 +40,12 @@ const SignupForm = ({
             <label htmlFor="email">Email</label>
           </div>
         </div>
+        <div className="row">
+          <div className="input-field col s12">
+            <input id="city" name="city" type='text' className="validate" onChange={onChange}/>
+            <label htmlFor="city">City</label>
+          </div>
+        </div>
 
         <div className="row">
           <div className="input-field col s12">

@@ -13,6 +13,7 @@ class SignUpPage extends React.Component {
                 firstname: '',
                 lastname: '',
                 email: '',
+                city: '',
                 password: '',
                 confirm_password: ''
             }
@@ -29,6 +30,7 @@ class SignUpPage extends React.Component {
         const firstname = this.state.user.firstname;
         const lastname = this.state.user.lastname;
         const email = this.state.user.email;
+        const city = this.state.user.city;
         const password = this.state.user.password;
         const confirm_password = this.state.user.confirm_password;
 
@@ -36,8 +38,7 @@ class SignUpPage extends React.Component {
             return;
         }
 
-        //post signup form data
-        // construct fetch options
+        //post signup form data construct fetch options
         const init = {
             method: 'POST',
             cache: false,
@@ -46,42 +47,32 @@ class SignUpPage extends React.Component {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                username: email,
+                username: username,
                 firstname: firstname,
                 lastname: lastname,
                 email: email,
+                city: city,
                 password: password
             })
         };
 
+        fetch('http://localhost:3000/signup', init)
+            .then(response => {
+                if (response.status === 200) {
+                    this.setState({
+                        errors: {}
+                    });
 
-        console.log(username);
-        console.log(firstname);
-        console.log(lastname);
-        console.log(email);
-        console.log(password);
-        console.log(confirm_password);
-        /*
-          this needs to be updated to fetch from web server
-        */
-        // fetch('http://localhost:3000/auth/signup', init)
-        //     .then(response => {
-        //         if (response.statuc === 200) {
-        //             this.setState({
-        //                 errors: {}
-        //             });
-        //
-        //             // change the current URL to /login
-        //             this.context.router.replace('/login');
-        //         } else {
-        //             response.json().then(function(json){
-        //                 console.log(json);
-        //                 const errors = json.errors ? json.errors : {};
-        //                 errors.summary = json.message;
-        //                 this.setState({errors});
-        //             }.bind(this));
-        //         }
-        //     });
+                    this.context.router.replace('/login');
+                } else {
+                    console.log('Sign up failed');
+                    response.json().then(function(json){
+                        const errors = json.errors ? json.errors : {};  // parse for errors
+                        errors.summary = json.message;
+                        this.setState({errors});
+                    }.bind(this));
+                }
+            });
     }
 
     changeUser(event) {

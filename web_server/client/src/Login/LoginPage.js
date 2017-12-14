@@ -48,7 +48,7 @@ class LoginPage extends React.Component {
                     response.json().then(function(json){
                         console.log(json);
                         Auth.authenticateUser(json.token, this.state.user.username);  // handle token and email
-                        this.context.router.replace('/');
+                        this.context.router.replace('/home');
                     }.bind(this));
                 } else {
                     console.log('Login failed');

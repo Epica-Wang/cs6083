@@ -1,7 +1,7 @@
 class Auth {
   static authenticateUser(token, userName){
     localStorage.setItem('token', token);
-    localStorage.setItem('userName', userName);
+    localStorage.setItem('username', userName);
   }
 
   static isAuthenticated(){
